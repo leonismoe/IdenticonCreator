@@ -220,12 +220,8 @@ LRESULT CALLBACK MainWindow::WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM
 
 		case WM_PAINT:
 		{
-			static bool renderred = false;
-			if (!renderred) {
-				instance->OnRender();
-				//ValidateRect(hwnd, NULL);
-				renderred = true;
-			}
+			instance->OnRender();
+			//ValidateRect(hwnd, NULL);
 		}
 		result = 1;
 		wasHandled = true;
