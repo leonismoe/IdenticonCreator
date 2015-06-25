@@ -9,8 +9,8 @@
 #ifndef inVector
 #define inVector(value, vector) (std::find(vector.begin(), vector.end(), value) != vector.end())
 #endif
-#define IDRAWING_FUNC [](int x, int y, int rotate, UINT32 color, float cell, Canvas* canvas)
-typedef void(*IDRAWING_FUNCPTR)(int x, int y, int rotate, UINT32 color, float cell, Canvas* canvas);
+#define IDRAWING_FUNC [](int index, int rotate, UINT32 color, float cell, Canvas* canvas)
+typedef void(*IDRAWING_FUNCPTR)(int index, int rotate, UINT32 color, float cell, Canvas* canvas);
 
 class Identicon {
 	
@@ -73,10 +73,18 @@ protected:
 		&brush\
 	);\
 	RenderTarget->BeginDraw();\
+	index = index % 4;\
+	rotate = rotate % 4;\
+	int x = index % 2;\
+	int y = index > 1 ? 1 : 0;\
 	D2D1_MATRIX_3X2_F translation = D2D1::Matrix3x2F::Translation(x * cell, y * cell);\
-	for(; rotate >= 0 && rotate < 4; ++rotate) {\
-	D2D1_MATRIX_3X2_F rotation = D2D1::Matrix3x2F::Rotation(rotate * 90.0f, D2D1::Point2F(cell * 2.f, cell * 2.f));\
-	RenderTarget->SetTransform(translation * rotation);
+	D2D1_MATRIX_3X2_F cellrotate = x && y ? D2D1::Matrix3x2F::Identity() : D2D1::Matrix3x2F::Rotation(rotate * 90.0f, D2D1::Point2F(cell * .5f, cell * .5f));\
+	int _totalr = x ^ y ? 8 : (x ? 1 : 4);\
+	for(int _rotate = 0; _rotate < _totalr; ++_rotate) {\
+		if(_rotate == 4) translation = D2D1::Matrix3x2F::Translation(y * cell, x * cell);\
+		if(x && y) _rotate = rotate;\
+		D2D1_MATRIX_3X2_F _rotation = D2D1::Matrix3x2F::Rotation(_rotate * 90.0f, D2D1::Point2F(cell * 2.f, cell * 2.f));\
+		RenderTarget->SetTransform(cellrotate * translation * _rotation);
 
 #define IDRAWING_DRAW_FILL \
 	RenderTarget->FillRectangle(D2D1::RectF(\

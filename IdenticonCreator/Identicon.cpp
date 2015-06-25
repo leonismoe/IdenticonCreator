@@ -52,7 +52,7 @@ void Identicon::draw(const std::string md5) {
 	selectedColors.reserve(3);
 
 	for (int i = 0; i < 3; ++i) {
-		int colorIndex = hex2int(&md5[i + 8]) % 3;
+		int colorIndex = hex2int(&md5[i + 8]) % 5;
 		if ((colorIndex == 0 || colorIndex == 4) && (inVector(0, selectedColors) || inVector(4, selectedColors))
 			|| (colorIndex == 2 || colorIndex == 3) && (inVector(2, selectedColors) || inVector(3, selectedColors))) {
 			colorIndex = 1;
@@ -64,13 +64,15 @@ void Identicon::draw(const std::string md5) {
 	int cornerShape = hex2int(&md5[4]);
 	int centerShape = hex2int(&md5[1]);
 
-	OUTER_SHAPES[sideShape % OUTER_SHAPES_LENGTH](1, 0, 0, selectedColors[0], cell, canvas);
-	OUTER_SHAPES[sideShape % OUTER_SHAPES_LENGTH](0, 1, 0, selectedColors[0], cell, canvas);
-	OUTER_SHAPES[cornerShape % OUTER_SHAPES_LENGTH](0, 0, 0, selectedColors[1], cell, canvas);
-	CENTER_SHAPES[centerShape % CENTER_SHAPES_LENGTH](1, 1, 0, selectedColors[2], cell, canvas);
-	CENTER_SHAPES[centerShape % CENTER_SHAPES_LENGTH](1, 1, 1, selectedColors[2], cell, canvas);
-	CENTER_SHAPES[centerShape % CENTER_SHAPES_LENGTH](1, 1, 2, selectedColors[2], cell, canvas);
-	CENTER_SHAPES[centerShape % CENTER_SHAPES_LENGTH](1, 1, 3, selectedColors[2], cell, canvas);
+	int sideShapeRotation = hex2int(&md5[3]);
+	int cornerShapeRotation = hex2int(&md5[5]);
+
+	OUTER_SHAPES[sideShape % OUTER_SHAPES_LENGTH](1, sideShapeRotation, selectedColors[0], cell, canvas);
+	OUTER_SHAPES[cornerShape % OUTER_SHAPES_LENGTH](0, cornerShapeRotation, selectedColors[1], cell, canvas);
+	CENTER_SHAPES[centerShape % CENTER_SHAPES_LENGTH](3, 0, selectedColors[2], cell, canvas);
+	CENTER_SHAPES[centerShape % CENTER_SHAPES_LENGTH](3, 1, selectedColors[2], cell, canvas);
+	CENTER_SHAPES[centerShape % CENTER_SHAPES_LENGTH](3, 2, selectedColors[2], cell, canvas);
+	CENTER_SHAPES[centerShape % CENTER_SHAPES_LENGTH](3, 3, selectedColors[2], cell, canvas);
 }
 
 int Identicon::hex2int(const char *str, int len) {

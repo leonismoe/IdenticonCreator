@@ -21,7 +21,9 @@ public:
 
 	void registerCanvas();
 	void unregisterCanvas();
-	static void cacheImage(int index);
+	void initImage();
+	void releaseImage();
+	void saveImage();
 	static LRESULT CALLBACK canvasProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 	HRESULT initRenderTarget();
@@ -38,6 +40,7 @@ protected:
 
 	HWND hWnd;
 	RECT CanvasRC;
+	D2D1_SIZE_U CanvasSize;
 
 };
 

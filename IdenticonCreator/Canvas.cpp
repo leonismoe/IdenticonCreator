@@ -42,9 +42,9 @@ void Canvas::unregisterCanvas() {
 	UnregisterClass(CanvasClassName, NULL);
 }
 
-void Canvas::cacheImage(int index) {
-	
-}
+void Canvas::initImage() {}
+void Canvas::releaseImage() {}
+void Canvas::saveImage() {}
 
 LRESULT CALLBACK Canvas::canvasProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 	switch (uMsg) {
@@ -73,7 +73,7 @@ HRESULT Canvas::initRenderTarget() {
 	if (!RenderTarget) {
 		GetClientRect(hWnd, &CanvasRC);
 
-		D2D1_SIZE_U size = D2D1::SizeU(
+		CanvasSize = D2D1::SizeU(
 			CanvasRC.right - CanvasRC.left,
 			CanvasRC.bottom - CanvasRC.top
 		);
@@ -81,7 +81,7 @@ HRESULT Canvas::initRenderTarget() {
 		// Create a Direct2D render target.
 		hr = MainWindow::getD2DFactory()->CreateHwndRenderTarget(
 			D2D1::RenderTargetProperties(),
-			D2D1::HwndRenderTargetProperties(hWnd, size),
+			D2D1::HwndRenderTargetProperties(hWnd, CanvasSize),
 			&RenderTarget
 		);
 	}
