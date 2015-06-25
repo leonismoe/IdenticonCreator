@@ -8,7 +8,7 @@ const COLORREF ICButton::COLOR_DEFAULT_PUSHED_FOREGROUND = RGB(0xFF, 0xFF, 0xFF)
 const COLORREF ICButton::COLOR_DEFAULT_PUSHED_BACKGROUND = RGB(0x4E, 0xA6, 0xEA);
 
 const LPCWSTR ICButton::BUTTONID = L"BUTTON";
-const LPCWSTR ICButton::DEFAULT_FONT = L"Microsoft Yahei UI";
+const LPCWSTR ICButton::DEFAULT_FONT = L"Î¢ÈíÑÅºÚ";
 const int ICButton::DEFAULT_WIDTH  = 30;
 const int ICButton::DEFAULT_HEIGHT = 26;
 const int ICButton::DEFAULT_FONTSIZE = 20;

@@ -4,7 +4,7 @@ const COLORREF TextInput::COLOR_DEFAULT_BORDER_NORMAL = RGB(0xCA, 0xCA, 0xCA);
 const COLORREF TextInput::COLOR_DEFAULT_BORDER_HOVER  = RGB(0x9A, 0x9A, 0x9A);
 const COLORREF TextInput::COLOR_DEFAULT_BORDER_FOCUS  = RGB(0x4E, 0xA6, 0xEA);
 
-const LPCWSTR TextInput::DEFAULT_FONT = L"Microsoft Yahei UI";
+const LPCWSTR TextInput::DEFAULT_FONT = L"Î¢ÈíÑÅºÚ";
 const int TextInput::DEFAULT_WIDTH = 295;
 const int TextInput::DEFAULT_HEIGHT = 43;
 const int TextInput::DEFAULT_FONTSIZE = 24;
