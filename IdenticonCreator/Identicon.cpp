@@ -4,16 +4,17 @@
 #include "md5.h"
 #include <ctime>
 
-bool Identicon::isDraw = false;
 int Identicon::cell = 112.f;
 Canvas* Identicon::canvas = nullptr;
-std::string Identicon::curmd5 = MD5(std::to_string(time(NULL))).hexdigest();
+std::string Identicon::curmd5 = MD5(std::to_string(time(NULL))).hexdigest(); // 随机生成初始 MD5
 
+// 初始化
 void Identicon::init(HWND hWnd) {
 	canvas = new Canvas;
 	canvas->initialize(hWnd, 13, 39, 448, 448);
 }
 
+// 绘制确定输入数据的 identicon 图形
 void Identicon::create(LPSTR text) {
 	draw(MD5(text).hexdigest());
 }
@@ -33,10 +34,12 @@ void Identicon::create(std::wstring text) {
 	draw(MD5(text).hexdigest());
 }
 
+// 绘制缓存 md5 对应的 identicon 图形
 void Identicon::draw() {
 	draw(curmd5);
 }
 
+// 绘制指定 md5 的 identicon  图形
 void Identicon::draw(const std::string md5) {
 	canvas->clear();
 	curmd5 = md5;
@@ -51,30 +54,36 @@ void Identicon::draw(const std::string md5) {
 	std::vector<UINT> selectedColors;
 	selectedColors.reserve(3);
 
+	// 选择颜色
 	for (int i = 0; i < 3; ++i) {
 		int colorIndex = hex2int(&md5[i + 8]) % 5;
-		if ((colorIndex == 0 || colorIndex == 4) && (inVector(0, selectedColors) || inVector(4, selectedColors))
-			|| (colorIndex == 2 || colorIndex == 3) && (inVector(2, selectedColors) || inVector(3, selectedColors))) {
+		if ((colorIndex == 0 || colorIndex == 4) && (inVector(0, selectedColors) || inVector(4, selectedColors)) // 不允许同时出现深灰和深色
+			|| (colorIndex == 2 || colorIndex == 3) && (inVector(2, selectedColors) || inVector(3, selectedColors))) { // 不允许同时出现亮灰和亮色
 			colorIndex = 1;
 		}
 		selectedColors.push_back(AVAILABLE_COLORS[colorIndex]);
 	}
 
+	// 确定基本图形
 	int sideShape = hex2int(&md5[2]);
 	int cornerShape = hex2int(&md5[4]);
 	int centerShape = hex2int(&md5[1]);
 
+	// 确定外围图形的初始旋转角
 	int sideShapeRotation = hex2int(&md5[3]);
 	int cornerShapeRotation = hex2int(&md5[5]);
 
-	OUTER_SHAPES[sideShape % OUTER_SHAPES_LENGTH](1, sideShapeRotation, selectedColors[0], cell, canvas);
-	OUTER_SHAPES[cornerShape % OUTER_SHAPES_LENGTH](0, cornerShapeRotation, selectedColors[1], cell, canvas);
-	CENTER_SHAPES[centerShape % CENTER_SHAPES_LENGTH](3, 0, selectedColors[2], cell, canvas);
+	// 绘制图形
+	OUTER_SHAPES[sideShape % OUTER_SHAPES_LENGTH](1, sideShapeRotation, selectedColors[0], cell, canvas); // 绘制边缘图形
+	OUTER_SHAPES[cornerShape % OUTER_SHAPES_LENGTH](0, cornerShapeRotation, selectedColors[1], cell, canvas); // 绘制四个角落的图形
+	CENTER_SHAPES[centerShape % CENTER_SHAPES_LENGTH](3, 0, selectedColors[2], cell, canvas); // 绘制中心图形 (绘图函数存在 BUG，这里不得不画 4 次)
 	CENTER_SHAPES[centerShape % CENTER_SHAPES_LENGTH](3, 1, selectedColors[2], cell, canvas);
 	CENTER_SHAPES[centerShape % CENTER_SHAPES_LENGTH](3, 2, selectedColors[2], cell, canvas);
 	CENTER_SHAPES[centerShape % CENTER_SHAPES_LENGTH](3, 3, selectedColors[2], cell, canvas);
 }
 
+// 将 string 类型的 16 进制数值转换为 int
+// str: 待转换字符串   len: 字符串长度(不能超过 7，否则会溢出)
 int Identicon::hex2int(const char *str, int len) {
 	char *tmp = new char[len + 1];
 	for (int i = 0; i < len; ++i) tmp[i] = str[i];
@@ -84,6 +93,7 @@ int Identicon::hex2int(const char *str, int len) {
 	return result;
 }
 
+// 将 HSL 色域的颜色转换为 unsigned int 表示的 RGB 颜色 (0x00rrggbb)
 inline double Identicon::hue2rgb(double p, double q, double h) {
 	if (h < 0.0) h += 1.0;
 	if (h > 1.0) h -= 1.0;
@@ -113,6 +123,7 @@ UINT Identicon::correctedHsl(double h, double s, double l) {
 }
 
 
+// ====================== 基本图形 绘制函数 开始 ======================
 const int Identicon::CENTER_SHAPES_LENGTH = 13;
 const int Identicon::OUTER_SHAPES_LENGTH = 4;
 const IDRAWING_FUNCPTR Identicon::CENTER_SHAPES[] = {
