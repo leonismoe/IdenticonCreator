@@ -32,8 +32,6 @@ void Identicon::draw() {
 }
 
 void Identicon::draw(const std::string md5) {
-	if (isDraw) return;
-	isDraw = true;
 	Canvas::clearCanvas(0);
 	curmd5 = md5;
 	double hue = std::stoi(&curmd5[25], nullptr, 16) / (double)0xfffffff;
@@ -67,8 +65,6 @@ void Identicon::draw(const std::string md5) {
 	CENTER_SHAPES[centerShape % CENTER_SHAPES_LENGTH](1, 1, 1, selectedColors[2], cell);
 	CENTER_SHAPES[centerShape % CENTER_SHAPES_LENGTH](1, 1, 2, selectedColors[2], cell);
 	CENTER_SHAPES[centerShape % CENTER_SHAPES_LENGTH](1, 1, 3, selectedColors[2], cell);
-
-	isDraw = false;
 }
 
 int Identicon::hex2int(const char *str, int len) {
@@ -162,8 +158,8 @@ const IDRAWING_FUNCPTR Identicon::CENTER_SHAPES[] = {
 			RenderTarget->FillRectangle(D2D1::RectF(
 				outer,
 				outer,
-				cell - inner - outer,
-				cell - inner - outer
+				cell - inner,
+				cell - inner
 			), brush);
 		IDRAWING_DRAW_END
 	},

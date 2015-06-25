@@ -57,18 +57,8 @@ ID2D1HwndRenderTarget* Canvas::getRenderTarget(int index) {
 	return CvsInstances[index]->RenderTarget;
 }
 
-void Canvas::PaintProc(HWND hwnd) {
-	PAINTSTRUCT ps;
-	HDC hDC = BeginPaint(hwnd, &ps);
-	RECT rect;
-	GetClientRect(hwnd, &rect);
-
-	SetTextColor(hDC, RGB(100, 0, 100));
-	WCHAR staticText[99];
-	int len = SendMessage(hwnd, WM_GETTEXT,
-		ARRAYSIZE(staticText), (LPARAM)staticText);
-	TextOut(hDC, rect.left, rect.top, staticText, len);
-	EndPaint(hwnd, &ps);
+void Canvas::cacheImage(int index) {
+	
 }
 
 LRESULT CALLBACK Canvas::canvasProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {

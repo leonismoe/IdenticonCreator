@@ -26,7 +26,7 @@ public:
 
 	void registerCanvas();
 	void unregisterCanvas();
-	static void PaintProc(HWND hwnd);
+	static void cacheImage(int index);
 	static LRESULT CALLBACK canvasProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 	void beginPaint();

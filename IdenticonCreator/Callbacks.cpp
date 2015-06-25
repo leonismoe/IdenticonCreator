@@ -30,9 +30,6 @@ LRESULT CALLBACK TextInputCallback(HWND hWnd, UINT uMsg, WPARAM wParam, LONG lPa
 			std::wstring text = buffer;
 			delete[] buffer;
 			buffer = nullptr;
-			OutputDebugString(L"TextInput: ");
-			OutputDebugString(text.c_str());
-			OutputDebugString(L"\n");
 			Identicon::create(text);
 			break;
 		}

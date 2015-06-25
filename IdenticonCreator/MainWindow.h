@@ -42,6 +42,7 @@ public:
 
 	static const int width;
 	static const int height;
+	static float dpiX, dpiY;
 
 	// The windows procedure.
 	static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
@@ -67,8 +68,6 @@ private:
 	HWND hWnd = NULL;
 	ID2D1Factory* Direct2dFactory = nullptr;
 	ID2D1HwndRenderTarget* RenderTarget = nullptr;
-	
-	static float dpiX, dpiY;
 
 	static MainWindow *instance;
 	HICON AppIcon;
