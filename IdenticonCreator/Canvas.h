@@ -8,33 +8,24 @@
 #include <d2d1helper.h>
 #pragma comment (lib, "d2d1.lib")
 
-typedef struct {
-	int x;
-	int y;
-} Points;
-
 class Canvas {
 
 public:
 	const static LPCWSTR CanvasClassName;
+	ID2D1HwndRenderTarget* RenderTarget = nullptr;
 
 	Canvas();
 	Canvas(HWND pwnd, int x, int y, int width, int height);
+	~Canvas();
 	void initialize(HWND pwnd, int x, int y, int width, int height);
-	static int indexOf(HWND &hWnd);
-	static ID2D1HwndRenderTarget* Canvas::getRenderTarget(int index);
 
 	void registerCanvas();
 	void unregisterCanvas();
 	static void cacheImage(int index);
 	static LRESULT CALLBACK canvasProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
-	void beginPaint();
-	void endPaint();
-	void addPolygon(std::vector<Points> points, bool invert = false);
-
 	HRESULT initRenderTarget();
-	static HRESULT clearCanvas(int index);
+	HRESULT clear();
 	void releaseRenderTarget();
 
 
@@ -47,10 +38,6 @@ protected:
 
 	HWND hWnd;
 	RECT CanvasRC;
-	ID2D1HwndRenderTarget* RenderTarget = nullptr;
-
-	static std::vector<Canvas*> CvsInstances;
-	static std::vector<HWND> CvsHWNDs;
 
 };
 

@@ -6,7 +6,13 @@
 
 bool Identicon::isDraw = false;
 int Identicon::cell = 112.f;
+Canvas* Identicon::canvas = nullptr;
 std::string Identicon::curmd5 = MD5(std::to_string(time(NULL))).hexdigest();
+
+void Identicon::init(HWND hWnd) {
+	canvas = new Canvas;
+	canvas->initialize(hWnd, 13, 39, 448, 448);
+}
 
 void Identicon::create(LPSTR text) {
 	draw(MD5(text).hexdigest());
@@ -32,7 +38,7 @@ void Identicon::draw() {
 }
 
 void Identicon::draw(const std::string md5) {
-	Canvas::clearCanvas(0);
+	canvas->clear();
 	curmd5 = md5;
 	double hue = std::stoi(&curmd5[25], nullptr, 16) / (double)0xfffffff;
 	UINT AVAILABLE_COLORS[] = {
@@ -58,13 +64,13 @@ void Identicon::draw(const std::string md5) {
 	int cornerShape = hex2int(&md5[4]);
 	int centerShape = hex2int(&md5[1]);
 
-	OUTER_SHAPES[sideShape % OUTER_SHAPES_LENGTH](1, 0, 0, selectedColors[0], cell);
-	OUTER_SHAPES[sideShape % OUTER_SHAPES_LENGTH](0, 1, 0, selectedColors[0], cell);
-	OUTER_SHAPES[cornerShape % OUTER_SHAPES_LENGTH](0, 0, 0, selectedColors[1], cell);
-	CENTER_SHAPES[centerShape % CENTER_SHAPES_LENGTH](1, 1, 0, selectedColors[2], cell);
-	CENTER_SHAPES[centerShape % CENTER_SHAPES_LENGTH](1, 1, 1, selectedColors[2], cell);
-	CENTER_SHAPES[centerShape % CENTER_SHAPES_LENGTH](1, 1, 2, selectedColors[2], cell);
-	CENTER_SHAPES[centerShape % CENTER_SHAPES_LENGTH](1, 1, 3, selectedColors[2], cell);
+	OUTER_SHAPES[sideShape % OUTER_SHAPES_LENGTH](1, 0, 0, selectedColors[0], cell, canvas);
+	OUTER_SHAPES[sideShape % OUTER_SHAPES_LENGTH](0, 1, 0, selectedColors[0], cell, canvas);
+	OUTER_SHAPES[cornerShape % OUTER_SHAPES_LENGTH](0, 0, 0, selectedColors[1], cell, canvas);
+	CENTER_SHAPES[centerShape % CENTER_SHAPES_LENGTH](1, 1, 0, selectedColors[2], cell, canvas);
+	CENTER_SHAPES[centerShape % CENTER_SHAPES_LENGTH](1, 1, 1, selectedColors[2], cell, canvas);
+	CENTER_SHAPES[centerShape % CENTER_SHAPES_LENGTH](1, 1, 2, selectedColors[2], cell, canvas);
+	CENTER_SHAPES[centerShape % CENTER_SHAPES_LENGTH](1, 1, 3, selectedColors[2], cell, canvas);
 }
 
 int Identicon::hex2int(const char *str, int len) {

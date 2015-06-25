@@ -4,12 +4,13 @@
 #include <string>
 #include <Windows.h>
 #include <d2d1.h>
+#include "Canvas.h"
 
 #ifndef inVector
 #define inVector(value, vector) (std::find(vector.begin(), vector.end(), value) != vector.end())
 #endif
-#define IDRAWING_FUNC [](int x, int y, int rotate, UINT32 color, float cell)
-typedef void(*IDRAWING_FUNCPTR)(int x, int y, int rotate, UINT32 color, float cell);
+#define IDRAWING_FUNC [](int x, int y, int rotate, UINT32 color, float cell, Canvas* canvas)
+typedef void(*IDRAWING_FUNCPTR)(int x, int y, int rotate, UINT32 color, float cell, Canvas* canvas);
 
 class Identicon {
 	
@@ -18,6 +19,8 @@ public:
 	static const int OUTER_SHAPES_LENGTH;
 	static const IDRAWING_FUNCPTR CENTER_SHAPES[];
 	static const IDRAWING_FUNCPTR OUTER_SHAPES[];
+
+	static void init(HWND hWnd);
 
 	static void create(LPSTR text);
 	static void create(LPWSTR text);
@@ -38,6 +41,7 @@ protected:
 	static bool isDraw;
 	static int cell;
 	static std::string curmd5;
+	static Canvas *canvas;
 
 	static inline double hue2rgb(double p, double q, double h);
 
@@ -46,7 +50,7 @@ protected:
 
 
 #define IDRAWING_PATH_BEGIN \
-	ID2D1PathGeometry *PathGeometry;\
+	ID2D1PathGeometry *PathGeometry = nullptr;\
 	ID2D1GeometrySink *pSink = NULL;\
 	MainWindow::getD2DFactory()->CreatePathGeometry(&PathGeometry);\
 	PathGeometry->Open(&pSink);
@@ -59,11 +63,11 @@ protected:
 
 #define IDRAWING_PATH_END \
 	SafeRelease(&pSink);\
-	SafeRelease(&PathGeometry);
+	SafeRelease(&PathGeometry);\
 
 #define IDRAWING_DRAW_BEGIN \
 	ID2D1SolidColorBrush *brush;\
-	ID2D1RenderTarget *RenderTarget = Canvas::getRenderTarget(0);\
+	ID2D1RenderTarget *RenderTarget = canvas->RenderTarget;\
 	RenderTarget->CreateSolidColorBrush(\
 		D2D1::ColorF(color),\
 		&brush\

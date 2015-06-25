@@ -3,6 +3,7 @@
 #include "TextInput.h"
 #include "Canvas.h"
 #include "Callbacks.h"
+#include "Identicon.h"
 #include "resource.h"
 
 const LPWSTR MainWindow::ClassName = L"IdenticonCreator";
@@ -15,7 +16,6 @@ const int MainWindow::height = 500;
 ICButton closeBtn;
 ICButton minimizeBtn;
 TextInput textInputField;
-Canvas canvasInstance;
 
 MainWindow::MainWindow() : hWnd(NULL), Direct2dFactory(NULL), RenderTarget(NULL) {
 }
@@ -96,7 +96,7 @@ HRESULT MainWindow::Initialize(HINSTANCE hInstance) {
 			closeBtn.initialize(hWnd, L"r", 770, 0, CloseBtnCallback, ICButton::DEFAULT_WIDTH, ICButton::DEFAULT_HEIGHT, ICButton::DEFAULT_FONTSIZE, L"Webdings", CLOSEBTN_NORMAL_FG, CLOSEBTN_NORMAL_BG, CLOSEBTN_HOVERED_FG, CLOSEBTN_HOVERED_BG, CLOSEBTN_PUSHED_FG, CLOSEBTN_PUSHED_BG);
 			minimizeBtn.initialize(hWnd, L"0", 740, 0, MinimizeBtnCallback, ICButton::DEFAULT_WIDTH, ICButton::DEFAULT_HEIGHT, ICButton::DEFAULT_FONTSIZE, L"Webdings");
 			textInputField.initialize(hWnd, 495, 448, TextInputCallback, 295, 43);
-			canvasInstance.initialize(hWnd, 13, 39, 448, 448);
+			Identicon::init(hWnd);
 
 			ShowWindow(hWnd, SW_SHOWNORMAL);
 			UpdateWindow(hWnd);
@@ -220,8 +220,12 @@ LRESULT CALLBACK MainWindow::WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM
 
 		case WM_PAINT:
 		{
-			instance->OnRender();
-			//ValidateRect(hwnd, NULL);
+			static bool renderred = false;
+			if (!renderred) {
+				instance->OnRender();
+				//ValidateRect(hwnd, NULL);
+				renderred = true;
+			}
 		}
 		result = 1;
 		wasHandled = true;
@@ -278,6 +282,8 @@ HRESULT MainWindow::OnRender() {
 	DrawText(hDC, WindowTitle, -1, &rect, DT_SINGLELINE | DT_VCENTER);
 	SelectObject(hDC, hFontOld);
 	EndPaint(hWnd, &ps);
+
+	Identicon::draw();
 
 	return hr;
 }
